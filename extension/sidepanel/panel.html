@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Career Copilot</title>
+  <style>
+    :root { 
+      --primary: #2563eb; 
+      --text-main: #1f2937;
+      --bg-light: #f9fafb;
+    }
+    
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      background: var(--bg-light); 
+      margin: 0; 
+      color: var(--text-main);
+    }
+    
+    .header { 
+      background: var(--primary); 
+      color: white; 
+      padding: 15px; 
+      font-weight: bold; 
+      font-size: 15px; 
+    }
+    
+    .container { 
+      padding: 16px; 
+    }
+    
+    .card {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 16px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 16px;
+    }
+    
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #374151;
+    }
+    
+    textarea {
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 13px;
+      resize: vertical;
+      font-family: inherit;
+    }
+    
+    textarea:focus {
+      outline: 2px solid var(--primary);
+      border-color: transparent;
+    }
+
+    .btn-primary {
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      width: 100%;
+      padding: 12px; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      font-weight: 600;
+      font-size: 14px; 
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; }
+
+    #status {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #6b7280;
+      min-height: 18px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .loader {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      width: 20px; height: 20px;
+      animation: spin 1s linear infinite;
+      display: none;
+      margin: 10px auto;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .result-card {
+      background: white; 
+      padding: 16px;
+      border-radius: 8px; 
+      border: 1px solid #e5e7eb; 
+      display: none; /* Hidden until first analyze resolves */
+    }
+    
+    .score-container {
+      text-align: center;
+      margin: 10px 0 15px 0;
+    }
+    
+    #matchScore { 
+      font-size: 42px; 
+      font-weight: 800; 
+      color: var(--primary);
+      display: block;
+    }
+    
+    .score-label {
+      color: #6b7280; 
+      font-size: 12px; 
+      font-weight: 500;
+    }
+    
+    #results {
+      font-size: 12px; 
+      color: #374151;
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    
+    .skill-tag {
+      display: inline-block;
+      background: #fee2e2; 
+      color: #991b1b;
+      padding: 4px 10px; 
+      border-radius: 20px;
+      font-size: 11px; 
+      font-weight: 500;
+    }
+    
+    .roadmap-list { 
+      font-size: 12.5px; 
+      padding-left: 18px; 
+      color: #374151;
+      line-height: 1.5;
+    }
+    .roadmap-list li { margin-bottom: 6px; }
+    
+    .dashboard-link {
+      display: block; 
+      margin-top: 16px;
+      text-align: center;
+      font-size: 12px; 
+      color: var(--primary); 
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .dashboard-link:hover { text-decoration: underline; }
+    hr { border: 0; border-top: 1px solid #e5e7eb; margin: 12px 0; }
+  </style>
+</head>
+<body>
+
+  <div class="header">🚀 Career Copilot AI</div>
+  
+  <div class="container">
+    <div class="card">
+      <p style="font-size: 13px; color: #666; margin-top: 0; line-height: 1.4;">
+        Open all research job tabs (LinkedIn, Glassdoor, etc.), paste your professional skills profile details, then sync.
+      </p>
+  
+      <!-- Dynamic Resume Input Box -->
+      <div class="input-group">
+        <label for="resumeText">Your Resume Core Skills &amp; Experience:</label>
+        <textarea id="resumeText" rows="6" placeholder="Paste your plain-text resume here or type out your main technical skills..."></textarea>
+      </div>
+  
+      <!-- ID fixed to analyzeBtn to match your panel.js -->
+      <button id="analyzeBtn" class="btn-primary">Sync &amp; Analyze Tabs</button>
+      
+      <div id="loader" class="loader"></div>
+      <div id="status"></div>
+    </div>
+
+    <!-- Analysis Output Area -->
+    <div id="resultCard" class="result-card">
+      <div class="score-container">
+        <span id="matchScore">--%</span>
+        <span class="score-label">Resume Match Score</span>
+      </div>
+      
+      <hr/>
+
+      <p style="font-size:12px; margin-bottom:6px;"><strong>⚠️ Missing Skills:</strong></p>
+      <!-- Target list for rendering dynamic .skill-tag structures -->
+      <div id="results"></div>
+
+      <p style="font-size:12px; margin-top:12px; margin-bottom:6px;"><strong>🚀 Recommended Next Steps:</strong></p>
+      <!-- Target UI block for your step items array loop output -->
+      <ul id="roadmapShort" class="roadmap-list"></ul>
+
+      <a href="http://localhost:3000" target="_blank" class="dashboard-link">
+        View Full Dashboard →
+      </a>
+    </div>
+  </div>
+
+  <!-- External V3 JavaScript Loader -->
+  <script src="panel.js"></script>
+</body>
+</html>

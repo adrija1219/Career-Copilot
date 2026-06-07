@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "AI Career Research Copilot",
+  "version": "1.0",
+  "description": "Aggregate job research tabs and get AI-powered skill gap analysis.",
+  "permissions": ["tabs", "scripting", "sidePanel", "storage", "activeTab"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "sidepanel/panel.html"
+  },
+  "action": {
+    "default_title": "Open Career Copilot"
+  },
+  "host_permissions": ["<all_urls>"]
+}
