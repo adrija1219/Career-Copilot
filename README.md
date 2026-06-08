@@ -31,3 +31,4 @@ A full-stack Chrome extension sidepanel that securely aggregates active research
 ---
 ## Workflow
 
+<img width="1536" height="1024" alt="ChatGPT Image Jun 8, 2026, 03_43_00 PM" src="https://github.com/user-attachments/assets/8692db8d-5bb6-4248-9d1b-8d6d16041d7c" />
